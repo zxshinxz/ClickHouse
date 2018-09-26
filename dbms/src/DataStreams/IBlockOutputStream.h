@@ -74,7 +74,7 @@ public:
     /**
      *  Heartbeat
      */
-    virtual void onHeartbeat(const Heartbeat & heartbeat) {}
+    virtual void onHeartbeat(const Heartbeat & /*heartbeat*/) {}
 
     /** Content-Type to set when sending HTTP response.
       */
