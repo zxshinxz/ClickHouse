@@ -303,14 +303,10 @@ struct Settings
     M(SettingBool, calculate_text_stack_trace, 1, "Calculate text stack trace in case of exceptions during query execution. This is the default. It requires symbol lookups that may slow down fuzzing tests when huge amount of wrong queries are executed. In normal cases you should not disable this option.") \
     M(SettingBool, allow_ddl, true, "If it is set to true, then a user is allowed to executed DDL queries.") \
     \
-    /** The interval in microseconds to indicate live query is alive. */ \
-    M(SettingUInt64, heartbeat_delay, DEFAULT_HEARTBEAT_DELAY) \
-    /** Timeout after which temporary view is deleted. */ \
-    M(SettingSeconds, temporary_live_view_timeout, DEFAULT_TEMPORARY_LIVE_VIEW_TIMEOUT_SEC) \
-    /** Timeout after which temporary channel is deleted. */ \
-    M(SettingSeconds, temporary_live_channel_timeout, DEFAULT_TEMPORARY_LIVE_CHANNEL_TIMEOUT_SEC) \
-    /** The wait time for alter channel request */ \
-    M(SettingMilliseconds, alter_channel_wait_ms, DEFAULT_ALTER_CHANNEL_WAIT_MS) \
+    M(SettingUInt64, heartbeat_delay, DEFAULT_HEARTBEAT_DELAY, "The interval in microseconds to indicate live query is alive.") \
+    M(SettingSeconds, temporary_live_view_timeout, DEFAULT_TEMPORARY_LIVE_VIEW_TIMEOUT_SEC, "Timeout after which temporary view is deleted.") \
+    M(SettingSeconds, temporary_live_channel_timeout, DEFAULT_TEMPORARY_LIVE_CHANNEL_TIMEOUT_SEC, "Timeout after which temporary channel is deleted.") \
+    M(SettingMilliseconds, alter_channel_wait_ms, DEFAULT_ALTER_CHANNEL_WAIT_MS, "The wait time for alter channel request.") \
     \
 
 #define DECLARE(TYPE, NAME, DEFAULT, DESCRIPTION) \
