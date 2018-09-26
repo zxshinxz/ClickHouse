@@ -324,21 +324,21 @@ public:
 
     /** Run the ADD TO PARAMETER request. That is, add values to table's list parameter
       */
-    virtual void addToParameter(const ASTPtr & parameter, const ASTPtr & values, const Context & context)
+    virtual void addToParameter(const ASTPtr & /*parameter*/, const ASTPtr & /*values*/, const Context & /*context*/)
     {
         throw Exception("Method addToParameter is not supported by storage " + getName(), ErrorCodes::NOT_IMPLEMENTED);
     }
 
     /** Run the DROP FROM PARAMETER request. That is, remove values from table's list parameter
       */
-    virtual void dropFromParameter(const ASTPtr & parameter, const ASTPtr & values, const Context & context)
+    virtual void dropFromParameter(const ASTPtr & /*parameter*/, const ASTPtr & /*values*/, const Context & /*context*/)
     {
         throw Exception("Method dropFromParameter is not supported by storage " + getName(), ErrorCodes::NOT_IMPLEMENTED);
     }
 
     /** Run the MODIFY PARAMETER request. That is, modify table parameter value
       */
-    virtual void modifyParameter(const ASTPtr & parameter, const ASTPtr & values, const Context & context)
+    virtual void modifyParameter(const ASTPtr & /*parameter*/, const ASTPtr & /*values*/, const Context & /*context*/)
     {
         throw Exception("Method modifyParameter is not supported by storage " + getName(), ErrorCodes::NOT_IMPLEMENTED);
     }
