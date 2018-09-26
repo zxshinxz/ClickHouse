@@ -12,7 +12,7 @@ limitations under the License. */
 #pragma once
 
 #include <Core/Block.h>
-#include <Core/Progress.h>
+#include <IO/Progress.h>
 #include <Core/Heartbeat.h>
 #include <IO/WriteBuffer.h>
 #include <Common/Stopwatch.h>
