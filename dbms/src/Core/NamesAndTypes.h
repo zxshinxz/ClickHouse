@@ -73,4 +73,6 @@ public:
     bool contains(const String & name) const;
 };
 
+using NamesAndTypesListPtr = std::share_ptr<NamesAndTypesList>;
+
 }
