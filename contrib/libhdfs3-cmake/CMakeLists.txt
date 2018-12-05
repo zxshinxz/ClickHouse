@@ -19,10 +19,8 @@ include(Options)
 
 # prefer shared libraries
 set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_SHARED_LIBRARY_SUFFIX})
-#find_package(CURL REQUIRED)
 find_package(GSasl REQUIRED)
 find_package(KERBEROS REQUIRED)
-find_package(LibXml2 REQUIRED)
 
 # source
 set(PROTO_FILES
@@ -201,7 +199,7 @@ target_include_directories(hdfs3 PRIVATE ${LIBXML2_INCLUDE_DIR})
 #target_link_libraries(hdfs3 ${CURL_LIBRARIES})
 target_link_libraries(hdfs3 ${GSASL_LIBRARIES})
 target_link_libraries(hdfs3 ${KERBEROS_LIBRARIES})
-target_link_libraries(hdfs3 ${LIBXML2_LIBRARIES})
+target_link_libraries(hdfs3 ${LIBXML2_LIBRARY})
 #target_link_libraries(hdfs3 ${LIBUUID_LIBRARIES})
 
 # inherit from parent cmake

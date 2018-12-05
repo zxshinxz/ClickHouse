@@ -201,6 +201,11 @@ if (USE_INTERNAL_HDFS3_LIBRARY)
     add_subdirectory(libhdfs3-cmake)
 endif ()
 
+if (USE_INTERNAL_LIBXML2_LIBRARY)
+    add_subdirectory(libxml2-cmake)
+endif ()
+
+
 if (USE_BASE64)
     add_subdirectory (base64-cmake)
 endif()
