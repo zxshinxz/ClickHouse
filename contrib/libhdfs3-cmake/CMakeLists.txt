@@ -7,6 +7,7 @@ if (NOT USE_INTERNAL_PROTOBUF_LIBRARY)
     endif ()
 endif()
 
+SET(WITH_KERBEROS false)
 # project and source dir
 set(HDFS3_ROOT_DIR ${CMAKE_SOURCE_DIR}/contrib/libhdfs3)
 set(HDFS3_SOURCE_DIR ${HDFS3_ROOT_DIR}/src)
@@ -20,7 +21,9 @@ include(Options)
 # prefer shared libraries
 set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_SHARED_LIBRARY_SUFFIX})
 find_package(GSasl REQUIRED)
-find_package(KERBEROS REQUIRED)
+if (WITH_KERBEROS)
+    find_package(KERBEROS REQUIRED)
+endif()
 
 # source
 set(PROTO_FILES
@@ -190,17 +193,17 @@ target_include_directories(hdfs3 PRIVATE ${HDFS3_SOURCE_DIR})
 target_include_directories(hdfs3 PRIVATE ${HDFS3_COMMON_DIR})
 target_include_directories(hdfs3 PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
-#target_include_directories(hdfs3 PRIVATE ${CURL_INCLUDE_DIR})
 target_include_directories(hdfs3 PRIVATE ${GSASL_INCLUDE_DIR})
-target_include_directories(hdfs3 PRIVATE ${KERBEROS_INCLUDE_DIRS})
+if (WITH_KERBEROS)
+    target_include_directories(hdfs3 PRIVATE ${KERBEROS_INCLUDE_DIRS})
+endif()
 target_include_directories(hdfs3 PRIVATE ${LIBXML2_INCLUDE_DIR})
-#target_include_directories(hdfs3 PRIVATE ${LIBUUID_INCLUDE_DIRS})
 
-#target_link_libraries(hdfs3 ${CURL_LIBRARIES})
 target_link_libraries(hdfs3 ${GSASL_LIBRARIES})
-target_link_libraries(hdfs3 ${KERBEROS_LIBRARIES})
+if (WITH_KERBEROS)
+    target_link_libraries(hdfs3 ${KERBEROS_LIBRARIES})
+endif()
 target_link_libraries(hdfs3 ${LIBXML2_LIBRARY})
-#target_link_libraries(hdfs3 ${LIBUUID_LIBRARIES})
 
 # inherit from parent cmake
 target_include_directories(hdfs3 PRIVATE ${Boost_INCLUDE_DIRS})
