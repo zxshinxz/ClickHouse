@@ -61,3 +61,6 @@
 [submodule "contrib/libxml2"]
 	path = contrib/libxml2
 	url = https://github.com/GNOME/libxml2.git
+[submodule "contrib/libgsasl"]
+	path = contrib/libgsasl
+	url = git@github.com:ClickHouse-Extras/libgsasl.git
