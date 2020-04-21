@@ -1,70 +1,73 @@
 # -*- coding: utf-8 -*-
 
-# - Single-page document.
-#   - Requirements to the md-souces:
-#       - Don't use links without anchors. It means, that you can not just link file. You should specify an anchor at the top of the file and then link to this anchor
-#       - Anchors should be unique through whole document.
-#   - Implementation:
-#       - Script gets list of the file from the `pages` section of `mkdocs.yml`. It gets commented files too, and it right.
-#       - Files are concatenated by order with incrementing level of headers in all files except the first one
-#       - Script converts links to other files into inside page links.
-#         - Skipping links started with 'http'
-#         - Not http-links with anchor are cutted to the anchor sign (#).
-#         - For not http-links without anchor script logs an error and cuts them from the resulting single-page document.
-
 import logging
 import re
 import os
 
+import yaml
 
-def concatenate(lang, docs_path, single_page_file):
 
-    proj_config = os.path.join(docs_path, 'toc_%s.yml' % lang)
+def recursive_values(item):
+    if isinstance(item, dict):
+        for _, value in item.items():
+            yield from recursive_values(value)
+    elif isinstance(item, list):
+        for value in item:
+            yield from recursive_values(value)
+    elif isinstance(item, str):
+        yield item
+
+
+def concatenate(lang, docs_path, single_page_file, nav):
     lang_path = os.path.join(docs_path, lang)
+    az_re = re.compile(r'[a-z]')
 
-    with open(proj_config) as cfg_file:
-        files_to_concatenate = []
-        for l in cfg_file:
-            if '.md' in l and 'single_page' not in l:
-                path = (l[l.index(':') + 1:]).strip(" '\n")
-                files_to_concatenate.append(path)
-
-    logging.info(
-        str(len(files_to_concatenate)) +
-        ' files will be concatenated into single md-file.')
+    proj_config = f'{docs_path}/toc_{lang}.yml'
+    if os.path.exists(proj_config):
+        with open(proj_config) as cfg_file:
+            nav = yaml.full_load(cfg_file.read())['nav']
+    files_to_concatenate = list(recursive_values(nav))
+    files_count = len(files_to_concatenate)
+    logging.info(f'{files_count} files will be concatenated into single md-file for {lang}.')
     logging.debug('Concatenating: ' + ', '.join(files_to_concatenate))
-
-    first_file = True
+    assert files_count > 0, f'Empty single-page for {lang}'
 
     for path in files_to_concatenate:
+        if path.endswith('introduction/info.md'):
+            continue
+        try:
+            with open(os.path.join(lang_path, path)) as f:
+                anchors = set()
+                tmp_path = path.replace('/index.md', '/').replace('.md', '/')
+                prefixes = ['', '../', '../../', '../../../']
+                parts = tmp_path.split('/')
+                anchors.add(parts[-2] + '/')
+                anchors.add('/'.join(parts[1:]))
 
-        single_page_file.write('\n\n')
+                for part in parts[0:-2] if len(parts) > 2 else parts:
+                    for prefix in prefixes:
+                        anchor = prefix + tmp_path
+                        if anchor:
+                            anchors.add(anchor)
+                            anchors.add('../' + anchor)
+                            anchors.add('../../' + anchor)
+                    tmp_path = tmp_path.replace(part, '..')
 
-        with open(os.path.join(lang_path, path)) as f:
+                for anchor in anchors:
+                    if re.search(az_re, anchor):
+                        single_page_file.write('<a name="%s"></a>' % anchor)
 
-            # function is passed into re.sub() to process links
-            def link_proc(matchObj):
-                text, link = matchObj.group().strip('[)').split('](', 1)
-                if link.startswith('http:') or link.startswith('https:') or '.jpeg' in link or '.jpg' in link or '.png' in link or '.gif' in link:
-                    return '[' + text + '](' + link + ')'
-                else:
-                    sharp_pos = link.find('#')
-                    if sharp_pos > -1:
-                        return '[' + text + '](' + link[sharp_pos:] + ')'
-                    else:
-                        return '[' + text + '](#' + link.replace('../', '').replace('/index.md', '').replace('.md', '') + ')'
+                single_page_file.write('\n')
 
-            for l in f:
-                # Processing links in a string
-                l = re.sub(r'\[.+?\]\(.+?\)', link_proc, l)
-
-                # Correcting headers levels
-                if not first_file:
+                in_metadata = False
+                for l in f:
+                    if l.startswith('---'):
+                        in_metadata = not in_metadata
                     if l.startswith('#'):
                         l = '#' + l
-                else:
-                    first_file = False
-
-                single_page_file.write(l)
+                    if not in_metadata:
+                        single_page_file.write(l)
+        except IOError as e:
+            logging.warning(str(e))
 
     single_page_file.flush()

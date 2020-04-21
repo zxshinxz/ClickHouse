@@ -50,13 +50,14 @@ IncludeCategories:
   - Regex: '.*'
     Priority: 40
 ReflowComments: false
-AlignEscapedNewlinesLeft: true
+AlignEscapedNewlinesLeft: false
+AlignEscapedNewlines: DontAlign
+AlignTrailingComments: false
 
 # Not changed:
 AccessModifierOffset: -4
 AlignConsecutiveAssignments: false
 AlignOperands: false
-AlignTrailingComments: false
 AllowAllParametersOfDeclarationOnNextLine: true
 AllowShortBlocksOnASingleLine: false
 AllowShortCaseLabelsOnASingleLine: false

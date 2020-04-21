@@ -1,23 +1,23 @@
-# AMPLab Big Data Benchmark
+# AMPLab Big Data Benchmark {#amplab-big-data-benchmark}
 
-См. <https://amplab.cs.berkeley.edu/benchmark/>
+См. https://amplab.cs.berkeley.edu/benchmark/
 
-Зарегистрируйте бесплатную учетную запись на <https://aws.amazon.com> - понадобится кредитная карта, email и номер телефона
-Получите новый ключ доступа на <https://console.aws.amazon.com/iam/home?nc2=h_m_sc#security_credential>
+Зарегистрируйте бесплатную учетную запись на https://aws.amazon.com - понадобится кредитная карта, email и номер телефона
+Получите новый ключ доступа на https://console.aws.amazon.com/iam/home?nc2=h\_m\_sc\#security\_credential
 
 Выполните следующее в консоли:
 
-```bash
-sudo apt-get install s3cmd
-mkdir tiny; cd tiny;
-s3cmd sync s3://big-data-benchmark/pavlo/text-deflate/tiny/ .
-cd ..
-mkdir 1node; cd 1node;
-s3cmd sync s3://big-data-benchmark/pavlo/text-deflate/1node/ .
-cd ..
-mkdir 5nodes; cd 5nodes;
-s3cmd sync s3://big-data-benchmark/pavlo/text-deflate/5nodes/ .
-cd ..
+``` bash
+$ sudo apt-get install s3cmd
+$ mkdir tiny; cd tiny;
+$ s3cmd sync s3://big-data-benchmark/pavlo/text-deflate/tiny/ .
+$ cd ..
+$ mkdir 1node; cd 1node;
+$ s3cmd sync s3://big-data-benchmark/pavlo/text-deflate/1node/ .
+$ cd ..
+$ mkdir 5nodes; cd 5nodes;
+$ s3cmd sync s3://big-data-benchmark/pavlo/text-deflate/5nodes/ .
+$ cd ..
 ```
 
 Выполните следующие запросы к ClickHouse:
@@ -86,13 +86,13 @@ CREATE TABLE uservisits_5nodes_on_single
 
 Возвращаемся в консоль:
 
-```bash
-for i in tiny/rankings/*.deflate; do echo $i; zlib-flate -uncompress < $i | clickhouse-client --host=example-perftest01j --query="INSERT INTO rankings_tiny FORMAT CSV"; done
-for i in tiny/uservisits/*.deflate; do echo $i; zlib-flate -uncompress < $i | clickhouse-client --host=example-perftest01j --query="INSERT INTO uservisits_tiny FORMAT CSV"; done
-for i in 1node/rankings/*.deflate; do echo $i; zlib-flate -uncompress < $i | clickhouse-client --host=example-perftest01j --query="INSERT INTO rankings_1node FORMAT CSV"; done
-for i in 1node/uservisits/*.deflate; do echo $i; zlib-flate -uncompress < $i | clickhouse-client --host=example-perftest01j --query="INSERT INTO uservisits_1node FORMAT CSV"; done
-for i in 5nodes/rankings/*.deflate; do echo $i; zlib-flate -uncompress < $i | clickhouse-client --host=example-perftest01j --query="INSERT INTO rankings_5nodes_on_single FORMAT CSV"; done
-for i in 5nodes/uservisits/*.deflate; do echo $i; zlib-flate -uncompress < $i | clickhouse-client --host=example-perftest01j --query="INSERT INTO uservisits_5nodes_on_single FORMAT CSV"; done
+``` bash
+$ for i in tiny/rankings/*.deflate; do echo $i; zlib-flate -uncompress < $i | clickhouse-client --host=example-perftest01j --query="INSERT INTO rankings_tiny FORMAT CSV"; done
+$ for i in tiny/uservisits/*.deflate; do echo $i; zlib-flate -uncompress < $i | clickhouse-client --host=example-perftest01j --query="INSERT INTO uservisits_tiny FORMAT CSV"; done
+$ for i in 1node/rankings/*.deflate; do echo $i; zlib-flate -uncompress < $i | clickhouse-client --host=example-perftest01j --query="INSERT INTO rankings_1node FORMAT CSV"; done
+$ for i in 1node/uservisits/*.deflate; do echo $i; zlib-flate -uncompress < $i | clickhouse-client --host=example-perftest01j --query="INSERT INTO uservisits_1node FORMAT CSV"; done
+$ for i in 5nodes/rankings/*.deflate; do echo $i; zlib-flate -uncompress < $i | clickhouse-client --host=example-perftest01j --query="INSERT INTO rankings_5nodes_on_single FORMAT CSV"; done
+$ for i in 5nodes/uservisits/*.deflate; do echo $i; zlib-flate -uncompress < $i | clickhouse-client --host=example-perftest01j --query="INSERT INTO uservisits_5nodes_on_single FORMAT CSV"; done
 ```
 
 Запросы для получения выборок данных:
@@ -120,4 +120,4 @@ ORDER BY totalRevenue DESC
 LIMIT 1
 ```
 
-[Оригинальная статья](https://clickhouse.yandex/docs/ru/getting_started/example_datasets/amplab_benchmark/) <!--hide-->
+[Оригинальная статья](https://clickhouse.tech/docs/ru/getting_started/example_datasets/amplab_benchmark/) <!--hide-->

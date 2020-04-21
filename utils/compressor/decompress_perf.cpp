@@ -1,8 +1,7 @@
 #include <lz4.h>
 #include <string.h>
 #include <optional>
-#include <common/likely.h>
-#include <common/Types.h>
+#include <common/types.h>
 
 #include <IO/ReadBuffer.h>
 #include <IO/ReadBufferFromFileDescriptor.h>
@@ -10,9 +9,9 @@
 #include <IO/MMapReadBufferFromFileDescriptor.h>
 #include <IO/HashingWriteBuffer.h>
 #include <IO/BufferWithOwnMemory.h>
-#include <IO/CompressedStream.h>
+#include <Compression/CompressionInfo.h>
 #include <IO/WriteHelpers.h>
-#include <IO/LZ4_decompress_faster.h>
+#include <Compression/LZ4_decompress_faster.h>
 #include <IO/copyData.h>
 #include <Common/PODArray.h>
 #include <Common/Stopwatch.h>

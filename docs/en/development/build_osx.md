@@ -1,51 +1,59 @@
-# How to Build ClickHouse on Mac OS X
+---
+toc_priority: 65
+toc_title: How to Build ClickHouse on Mac OS X
+---
 
-Build should work on Mac OS X 10.12. If you're using earlier version, you can try to build ClickHouse using Gentoo Prefix and clang sl in this instruction.
-With appropriate changes, it should also work on any other Linux distribution.
+# How to Build ClickHouse on Mac OS X {#how-to-build-clickhouse-on-mac-os-x}
 
-## Install Homebrew
+Build should work on Mac OS X 10.15 (Catalina)
 
-```bash
-/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+## Install Homebrew {#install-homebrew}
+
+``` bash
+$ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 ```
 
-## Install Required Compilers, Tools, and Libraries
+## Install Required Compilers, Tools, and Libraries {#install-required-compilers-tools-and-libraries}
 
-```bash
-brew install cmake ninja gcc icu4c mariadb-connector-c openssl libtool gettext readline
+``` bash
+$ brew install cmake ninja libtool gettext
 ```
 
-## Checkout ClickHouse Sources
+## Checkout ClickHouse Sources {#checkout-clickhouse-sources}
 
-```bash
-git clone --recursive git@github.com:yandex/ClickHouse.git
-# or: git clone --recursive https://github.com/yandex/ClickHouse.git
-
-cd ClickHouse
+``` bash
+$ git clone --recursive git@github.com:ClickHouse/ClickHouse.git
 ```
 
-For the latest stable version, switch to the `stable` branch.
+or
 
-## Build ClickHouse
+``` bash
+$ git clone --recursive https://github.com/ClickHouse/ClickHouse.git
 
-```bash
-mkdir build
-cd build
-cmake .. -DCMAKE_CXX_COMPILER=`which g++-8` -DCMAKE_C_COMPILER=`which gcc-8`
-ninja
-cd ..
+$ cd ClickHouse
 ```
 
-## Caveats
+## Build ClickHouse {#build-clickhouse}
 
-If you intend to run clickhouse-server, make sure to increase the system's maxfiles variable.
+``` bash
+$ mkdir build
+$ cd build
+$ cmake .. -DCMAKE_CXX_COMPILER=`which clang++` -DCMAKE_C_COMPILER=`which clang`
+$ ninja
+$ cd ..
+```
+
+## Caveats {#caveats}
+
+If you intend to run clickhouse-server, make sure to increase the system’s maxfiles variable.
 
 !!! info "Note"
-    You'll need to use sudo.
+    You’ll need to use sudo.
 
 To do so, create the following file:
 
 /Library/LaunchDaemons/limit.maxfiles.plist:
+
 ``` xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
@@ -71,13 +79,13 @@ To do so, create the following file:
 ```
 
 Execute the following command:
+
 ``` bash
 $ sudo chown root:wheel /Library/LaunchDaemons/limit.maxfiles.plist
 ```
 
 Reboot.
 
-To check if it's working, you can use `ulimit -n` command.
+To check if it’s working, you can use `ulimit -n` command.
 
-
-[Original article](https://clickhouse.yandex/docs/en/development/build_osx/) <!--hide-->
+[Original article](https://clickhouse.tech/docs/en/development/build_osx/) <!--hide-->

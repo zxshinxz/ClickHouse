@@ -1,15 +1,16 @@
 #include <iostream>
 
 #include <boost/program_options.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 
-#include <IO/CompressedWriteBuffer.h>
-#include <IO/CompressedReadBuffer.h>
+#include <Compression/CompressedWriteBuffer.h>
+#include <Compression/CompressedReadBuffer.h>
 #include <IO/WriteHelpers.h>
 #include <IO/Operators.h>
 #include <IO/ReadBufferFromFile.h>
 #include <IO/ReadHelpers.h>
 #include <IO/WriteBufferFromFileDescriptor.h>
-#include <IO/CompressedReadBufferFromFile.h>
+#include <Compression/CompressedReadBufferFromFile.h>
 
 
 /** This program checks correctness of .mrk (marks) file for corresponding compressed .bin file.
@@ -64,7 +65,7 @@ void checkCompressedHeaders(const std::string & mrk_path, const std::string & bi
 
         out << "Mark " << mark_num << ", points to " << offset_in_compressed_file << ", " << offset_in_decompressed_block << ". ";
 
-        bin_in.seek(offset_in_compressed_file);
+        bin_in.seek(offset_in_compressed_file, SEEK_SET);
         auto sizes = stat(bin_in, out);
 
         out << "Block sizes: " << sizes.first << ", " << sizes.second << '\n' << DB::flush;
@@ -75,19 +76,30 @@ void checkCompressedHeaders(const std::string & mrk_path, const std::string & bi
 void checkByCompressedReadBuffer(const std::string & mrk_path, const std::string & bin_path)
 {
     DB::ReadBufferFromFile mrk_in(mrk_path);
-    DB::CompressedReadBufferFromFile bin_in(bin_path, 0, 0);
+    DB::CompressedReadBufferFromFile bin_in(bin_path, 0, 0, 0);
 
     DB::WriteBufferFromFileDescriptor out(STDOUT_FILENO);
+    bool mrk2_format = boost::algorithm::ends_with(mrk_path, ".mrk2");
 
     for (size_t mark_num = 0; !mrk_in.eof(); ++mark_num)
     {
         UInt64 offset_in_compressed_file = 0;
         UInt64 offset_in_decompressed_block = 0;
+        UInt64 index_granularity_rows = 0;
 
         DB::readBinary(offset_in_compressed_file, mrk_in);
         DB::readBinary(offset_in_decompressed_block, mrk_in);
 
-        out << "Mark " << mark_num << ", points to " << offset_in_compressed_file << ", " << offset_in_decompressed_block << ".\n" << DB::flush;
+        out << "Mark " << mark_num << ", points to " << offset_in_compressed_file << ", " << offset_in_decompressed_block;
+
+        if (mrk2_format)
+        {
+            DB::readBinary(index_granularity_rows, mrk_in);
+
+            out << ", has rows after " << index_granularity_rows;
+        }
+
+        out << ".\n" << DB::flush;
 
         bin_in.seek(offset_in_compressed_file, offset_in_decompressed_block);
     }
@@ -121,7 +133,7 @@ int main(int argc, char ** argv)
         std::cerr << e.what() << ", " << e.message() << std::endl
             << std::endl
             << "Stack trace:" << std::endl
-            << e.getStackTrace().toString()
+            << e.getStackTraceString()
             << std::endl;
         throw;
     }

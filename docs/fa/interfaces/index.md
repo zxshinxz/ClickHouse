@@ -1,23 +1,29 @@
-<a name="interfaces"></a>
+---
+machine_translated: true
+machine_translated_rev: d734a8e46ddd7465886ba4133bff743c55190626
+toc_folder_title: Interfaces
+toc_priority: 14
+toc_title: "\u0645\u0639\u0631\u0641\u06CC \u0634\u0631\u06A9\u062A"
+---
 
-<div dir="rtl" markdown="1">
+# واسط {#interfaces}
 
-# رابط ها
+تاتر فراهم می کند دو رابط شبکه (هر دو می تواند به صورت اختیاری در ال اس برای امنیت بیشتر پیچیده):
 
-ClickHouse دو اینترفیس شبکه را فراهم می کند (هر دو می توانند به صورت اختیاری در TLS برای امنیت اضافی پیچیده شوند):
+-   [HTTP](http.md), که مستند شده است و به راحتی استفاده به طور مستقیم.
+-   [بومی tcp](tcp.md), که دارای سربار کمتر.
 
-* [HTTP](http.md), که مستند شده و به راحتی به طور مستقیم استفاده می شود.
-* [بومی TCP](tcp.md), که دارای سربار کمتر است.
+در اغلب موارد توصیه می شود به استفاده از ابزار مناسب و یا کتابخانه به جای تعامل با کسانی که به طور مستقیم. به طور رسمی توسط یاندکس پشتیبانی به شرح زیر است:
 
-اگرچه در بیشتر موارد توصیه می شود از ابزار یا کتابخانه مناسب استفاده کنید تا به طور مستقیم با آن ها ارتباط برقرار نکنید. به طور رسمی توسط یانداکس پشتیبانی می شوند عبارتند از:
-* [خط فرمان خط](cli.md)
-* [راننده JDBC](jdbc.md)
-* [راننده ODBC](odbc.md)
+-   [مشتری خط فرمان](cli.md)
+-   [JDBC driver](jdbc.md)
+-   [ODBC driver](odbc.md)
+-   [ج++ کتابخانه مشتری](cpp.md)
 
-همچنین برای کار با ClickHouse طیف گسترده ای از کتابخانه های شخص ثالث وجود دارد:
-* [کتابخانه های مشتری](third-party/client_libraries.md)
-* [ادغام](third-party/integrations.md)
-* [رابط های بصری](third-party/gui.md)
+همچنین طیف گسترده ای از کتابخانه های شخص ثالث برای کار با کلیک وجود دارد:
 
-</div>
-[مقاله اصلی](https://clickhouse.yandex/docs/fa/interfaces/) <!--hide-->
+-   [کتابخانه های مشتری](third-party/client_libraries.md)
+-   [یکپارچگی](third-party/integrations.md)
+-   [رابط های بصری](third-party/gui.md)
+
+[مقاله اصلی](https://clickhouse.tech/docs/en/interfaces/) <!--hide-->

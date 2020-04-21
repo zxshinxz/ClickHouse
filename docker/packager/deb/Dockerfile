@@ -1,33 +1,45 @@
-FROM ubuntu:18.04
+# docker build -t yandex/clickhouse-deb-builder .
+FROM ubuntu:19.10
 
-RUN apt-get update -y \
+RUN apt-get --allow-unauthenticated update -y && apt-get install --yes wget gnupg
+RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
+RUN echo "deb [trusted=yes] http://apt.llvm.org/eoan/ llvm-toolchain-eoan-10 main" >> /etc/apt/sources.list
+
+RUN apt-get --allow-unauthenticated update -y \
     && env DEBIAN_FRONTEND=noninteractive \
-        apt-get install --yes --no-install-recommends \
+        apt-get --allow-unauthenticated install --yes --no-install-recommends \
             bash \
             fakeroot \
-            cmake \
+            ccache \
             curl \
-            gcc-7 \
-            g++-7 \
-            gcc-8 \
-            g++-8 \
-            clang-6.0 \
-            lld-6.0 \
-            libclang-6.0-dev \
-            liblld-6.0-dev \
-            llvm-6.0 \
-            libllvm6.0 \
-            llvm-6.0-dev \
+            software-properties-common \
+            gnupg \
+            apt-transport-https \
+            ca-certificates
+
+# Libraries from OS are only needed to test the "unbundled" build (that is not used in production).
+RUN apt-get --allow-unauthenticated update -y \
+    && env DEBIAN_FRONTEND=noninteractive \
+        apt-get --allow-unauthenticated install --yes --no-install-recommends \
+            gcc-9 \
+            g++-9 \
+            clang-10 \
+            lld-10 \
+            clang-tidy-10 \
+            clang-9 \
+            lld-9 \
+            clang-tidy-9 \
             libicu-dev \
             libreadline-dev \
+            gperf \
             ninja-build \
             perl \
             pkg-config \
             devscripts \
             debhelper \
             git \
-            libc++abi-dev \
             libc++-dev \
+            libc++abi-dev \
             libboost-program-options-dev \
             libboost-system-dev \
             libboost-filesystem-dev \
@@ -35,18 +47,37 @@ RUN apt-get update -y \
             zlib1g-dev \
             liblz4-dev \
             libdouble-conversion-dev \
-            libsparsehash-dev \
             librdkafka-dev \
-            libpoconetssl50 \
+            libpoconetssl62 \
             libpoco-dev \
-            libsparsehash-dev \
             libgoogle-perftools-dev \
             libzstd-dev \
             libltdl-dev \
             libre2-dev \
             libjemalloc-dev \
+            libmsgpack-dev \
             unixodbc-dev \
-            odbcinst
+            odbcinst \
+            tzdata \
+            gperf \
+            alien \
+            libcapnp-dev \
+            cmake \
+            gdb  \
+            pigz \
+            moreutils \
+            libcctz-dev
 
+# Special dpkg-deb (https://github.com/ClickHouse-Extras/dpkg) version which is able
+# to compress files using pigz (https://zlib.net/pigz/) instead of gzip.
+# Significantly increase deb packaging speed and compatible with old systems
+RUN curl -O https://clickhouse-builds.s3.yandex.net/utils/dpkg-deb
+RUN chmod +x dpkg-deb
+RUN cp dpkg-deb /usr/bin
 
-CMD /bin/bash build/release --no-pbuilder && mv /*.deb /output
+# This symlink required by gcc to find lld compiler
+RUN ln -s /usr/bin/lld-10 /usr/bin/ld.lld
+
+COPY build.sh /
+
+CMD ["/bin/bash", "/build.sh"]
